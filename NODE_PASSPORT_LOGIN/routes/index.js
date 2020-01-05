@@ -5,6 +5,6 @@ const router = express.Router(); //to use express route, we need to create a var
 
 //and whenever we wanna create a route, then whatever the method, in this case it is a get request, so we handle the home/index page 
 // so we put an arrow function with a request and response object, and we take the response and call .send() 
-router.get('/', (req, res) => res.render('Welcome')); 
+router.get('/', (req, res) => res.render('welcome')); 
 
 module.exports = router;

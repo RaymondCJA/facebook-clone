@@ -1,5 +1,6 @@
 const express = require('express'); // bring in express
 const expressLayouts = require('express-ejs-layouts');
+const mongoose = require('mongoose'); //bring in mongoose
 
 const app = express(); //basic express server, initialise our app var
 
