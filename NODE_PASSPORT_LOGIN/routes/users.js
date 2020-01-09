@@ -2,6 +2,10 @@
 
 const express = require('express'); //we use the express router
 const router = express.Router(); //to use express route, we need to create a variable called router and set that to `express.Router()`
+const bcrypt = require('bcryptjs');
+
+// User model
+const User = require('../models/User');
 
 // login page
 router.get('/login', (req, res) => res.render('login')); 
@@ -35,7 +39,41 @@ router.post('/register', (req, res) => {
               password2
           });
       } else {
-          res.send('all fields entered correctly');
+          // validation passed
+          User.findOne( { email: email }).then(user => {
+              if(user) {
+                  // user exists
+                  errors.push({ msg: 'Email is already registered'});
+                  res.render('register', {
+                      errors,
+                      name, 
+                      email,
+                      password,
+                      password2
+                  });
+              } else {
+                  //stuff
+                  const newUser = new User({
+                      name, 
+                      email,
+                      password
+                  });
+
+                  // HASH PASSWORD
+                  bcrypt.genSalt(10, (err, salt) => {
+                    bcrypt.hash(newUser.password, salt, (err, hash) => {
+                      if (err) throw err;
+                      newUser.password = hash;
+                      newUser.save()
+                        .then(user => {
+                          req.flash('success_msg', 'You are now registered and can log in');
+                          res.redirect('/users/login');
+                        })
+                        .catch(err => console.log(err));
+                    });
+                  });
+              }
+          });
       }
 });
 

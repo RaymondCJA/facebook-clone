@@ -1,11 +1,13 @@
 const express = require('express'); // bring in express
 const expressLayouts = require('express-ejs-layouts');
 const mongoose = require('mongoose'); //bring in mongoose
+const flash = require('connect-flash');
+const session = require('express-session');
 
 const app = express(); //basic express server, initialise our app var
 
 // DB Config
-const db = require('./config/keys').MongoURI;
+const db = require('./config/keys').mongoURI;
 
 // Connect to Mongo
 mongoose.connect(db, {useNewUrlParser: true})
@@ -18,6 +20,26 @@ app.set('view engine', 'ejs');
 
 //Bodyparser
 app.use(express.urlencoded({ extended: false }));
+
+// Express session
+app.use(
+  session({
+    secret: 'secret',
+    resave: true,
+    saveUninitialized: true
+  })
+);
+
+// Connect flash
+app.use(flash());
+
+// Global variables
+app.use(function(req, res, next) {
+  res.locals.success_msg = req.flash('success_msg');
+  res.locals.error_msg = req.flash('error_msg');
+  res.locals.error = req.flash('error');
+  next();
+});
 
 // Routes
 app.use('/', require('./routes/index'));
