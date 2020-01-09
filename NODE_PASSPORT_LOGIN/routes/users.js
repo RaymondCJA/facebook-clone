@@ -7,13 +7,13 @@ const passport = require('passport');
 
 // User model
 const User = require('../models/User');
-////////////// const { forwardAuthenticated } = require('../config/auth');
+const { forwardAuthenticated } = require('../config/auth');
 
-// login page
-router.get('/login', (req, res) => res.render('login')); 
+// Login Page
+router.get('/login', forwardAuthenticated, (req, res) => res.render('login'));
 
-// register page
-router.get('/register', (req, res) => res.render('register')); 
+// Register Page
+router.get('/register', forwardAuthenticated, (req, res) => res.render('register'));
 
 // Register Handle
 router.post('/register', (req, res) => {
