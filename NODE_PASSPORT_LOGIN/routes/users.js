@@ -3,9 +3,11 @@
 const express = require('express'); //we use the express router
 const router = express.Router(); //to use express route, we need to create a variable called router and set that to `express.Router()`
 const bcrypt = require('bcryptjs');
+const passport = require('passport');
 
 // User model
 const User = require('../models/User');
+////////////// const { forwardAuthenticated } = require('../config/auth');
 
 // login page
 router.get('/login', (req, res) => res.render('login')); 
@@ -77,4 +79,20 @@ router.post('/register', (req, res) => {
       }
 });
 
-module.exports = router;
+// Login
+router.post('/login', (req, res, next) => {
+    passport.authenticate('local', {
+      successRedirect: '/dashboard',
+      failureRedirect: '/users/login',
+      failureFlash: true
+    })(req, res, next);
+  });
+  
+  // Logout
+  router.get('/logout', (req, res) => {
+    req.logout();
+    req.flash('success_msg', 'You are logged out');
+    res.redirect('/users/login');
+  });
+  
+  module.exports = router;
